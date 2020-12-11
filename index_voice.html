@@ -1,0 +1,48 @@
+<!-- index_voice.html -->
+
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>音声認識サンプル</title>
+    
+</head>
+<body>
+
+    <h2>音声認識サンプル</h2>
+    <button id="btn">start</button>
+    <div id="content"></div>
+
+<script>
+    //音声認識
+    const speech = new webkitSpeechRecognition();
+    speech.lang = 'ja-JP';
+
+    const btn = document.getElementById('btn');
+    const content = document.getElementById('content');
+
+    btn.addEventListener('click' , function(){
+        //クリックして音声認識スタート
+        speech.start();
+    });
+
+    //音声自動文字起こし----------
+    speech.onresult = function(e) {
+        speech.stop();
+        if(e.results[0].isFinal){
+            var autotext = e.results[0][0].transcript
+            console.log(e);
+            console.log(autotext);
+            content.innerHTML += '<div>'+ autotext +'</div>';
+        }
+    }
+    
+    //常に取得する
+    speech.onend = () => {
+        speech.start()
+    };
+    //音声自動文字起こし終了----------
+
+</script>
+<body>
+<html>

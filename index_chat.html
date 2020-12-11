@@ -1,0 +1,152 @@
+<!-- index_chat.html -->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatapp</title>
+
+   <style>
+       .name{
+           font-size: 10px;
+           opacity: 0.4;
+       }
+
+       .msg_main{
+           display: flex;
+           padding: 0 0 0 5px;
+           justify-content: space-between;
+           align-items: center;
+       }
+
+       .msg_left{
+           display: flex;
+           align-items: center;
+       }
+
+       .msg_right{
+           display: flex;
+           margin: 0 15px 0 0;
+       }
+
+       .icon{
+           border-radius: 50%;
+       }
+
+
+       .msg{
+           padding: 0 5px 0 5px;
+       }
+
+       .time{
+           font-size: 10px;
+           margin: 10px 0 0 0;
+       }
+
+       .text{
+           font-size: 16px;
+           font-weight: lighter;
+           border-radius: 10px;
+           padding: 5px 5px 5px 5px;
+       }
+
+       #output{
+           width: 300px;
+       }
+   </style>
+   
+   
+</head>
+<body>
+
+    <!-- 入力エリア -->
+    <div> 
+    <div>
+        name<input type="text" id="username">
+    </div>
+    <div>
+        text<textarea id="text" rows="5"></textarea>
+        <button id="send">send</button>
+    </div>
+    <!--  入力エリア終わり  -->
+
+    <!--  表示エリア  -->
+    <div id="output"></div>
+    </div>
+    <!--  表示エリア終わり  -->
+
+    <script src="https://www.gstatic.com/firebasejs/5.3.1/firebase.js"></script>
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyCwdcmrI7Qk_jyqL33c5V9gjQmoE4pgamE",
+        authDomain: "chatapp-fe2e4.firebaseapp.com",
+        databaseURL: "https://chatapp-fe2e4.firebaseio.com",
+        projectId: "chatapp-fe2e4",
+        storageBucket: "chatapp-fe2e4.appspot.com",
+        messagingSenderId: "684487472205",
+        appId: "1:684487472205:web:7eeac5ddc64ca3d6425804",
+        measurementId: "G-DY615TECHR"
+    };
+
+    // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+    //Firebaseへの書き込み読み込み処理
+        //準備
+        const newPostRef = firebase.database();
+        let room = "room1"; 
+
+        const send = document.getElementById("send");
+        const username = document.getElementById("username");
+        const text = document.getElementById("text");
+        const output = document.getElementById("output");
+
+        //メッセージ送信処理
+        send.addEventListener('click',function(){
+            //書き込み処理
+            newPostRef.ref(room).push({
+                username: username.value,
+                text: text.value,
+                time: time()
+            });
+            text.value = "";
+        });
+
+        //メッセージ受信処理
+        newPostRef.ref(room).on("child_added",function(data){
+            const v = data.val();//データ取得
+            const k = data.key;//ユニークkey取得
+            let str = "";
+
+            str += '<div id="'+ k +'" class="msg_main">';
+            str += '<div class="msg_left">';
+            str += '<div class=""><img src="img/icon_person.png" alt"" class="icon '+ v.username+'" width="30"></div>';
+            str += '<div class="msg">';
+            str += '<div class="name">'+ v.username +'</div>';
+            str += '<div class="text">'+ v.text +'</div>';
+            str += '</div></div>';
+            str += '<div class="msg_right">';
+            str += '<div class="time">'+ v.time +'</div>';
+            str += '</div></div>';
+
+            output.innerHTML += str;
+        });
+
+        //時間を取得する
+        function time() {
+            var date = new Date();
+            var hh = ("0"+date.getHours()).slice(-2);
+            var min = ("0"+date.getMinutes()).slice(-2);
+            var sec = ("0"+date.getSeconds()).slice(-2);
+
+            var time = hh + ":" + min + ":" + sec;
+            return time;
+        }
+
+</script>
+
+<!--npm install -g firebase-tools-->
+</body>
+<html>
